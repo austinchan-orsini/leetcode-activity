@@ -32,9 +32,8 @@ def main():
     current_total = get_solved_problems()
     new_problems = current_total - last_total
 
-    if new_problems <= 0:
-        print("No new problems solved today.")
-        return
+    new_problems = max(1, new_problems)
+    print(f"Forcing {new_problems} commits for testing.")
 
     # Simulate problem names (we can’t get real names w/o login)
     for i in range(new_problems):
