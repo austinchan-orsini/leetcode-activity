@@ -29,13 +29,13 @@ jobs:
       # Run your Python script
       - name: Run update script
         run: python update.py
-      # Commit & Push changes
+              # Commit & Push changes
       - name: Commit and push changes
         run: |
           git config user.name "leetcode-bot"
           git config user.email "leetcode-bot@users.noreply.github.com"
-          git checkout -B main  # force branch creation/reset
-          git pull origin main --rebase
+          git checkout main || git checkout -b main
+          git pull origin main --rebase || echo "Nothing to pull"
           git add -A
           git commit -m "Update solved problems" || echo "No changes to commit"
           git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" HEAD:main
