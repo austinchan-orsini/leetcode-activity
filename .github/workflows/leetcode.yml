@@ -3,27 +3,38 @@ name: Update LeetCode Activity
 on:
   schedule:
     - cron: "59 23 * * *" # Runs every day at 11:59 PM UTC
-  workflow_dispatch: # Allows manual trigger
+  workflow_dispatch: # Allows manual trigger from Actions tab
 
 jobs:
   update:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
 
+    steps:
+      # Checkout the repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false # we’ll use GITHUB_TOKEN for push
+
+      # Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.x"
 
+      # Install dependencies
       - name: Install dependencies
         run: pip install requests
 
+      # Run your Python script
       - name: Run update script
         run: python update.py
 
-      - name: Push changes
+      # Commit & Push changes
+      - name: Commit and push changes
         run: |
           git config user.name "leetcode-bot"
-          git config user.email "leetcode-bot@example.com"
-          git push
+          git config user.email "leetcode-bot@users.noreply.github.com"
+          git add .
+          git commit -m "Update solved problems" || echo "No changes to commit"
+          git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" HEAD:${{ github.ref }}
